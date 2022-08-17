@@ -7,30 +7,68 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      timer: 0.0
+      numero: 0,
+      nomeBotao: "Iniciar",
+      ultimo: null
     };
+
+    this.iniciar = this.iniciar.bind(this);
+    this.limpar = this.limpar.bind(this);
+    this.timer = null;
   }
+
+  iniciar() {
+
+    if (this.timer != null) {
+      clearInterval(this.timer);
+      this.timer = null;
+      this.setState({ nomeBotao: "Iniciar" });
+    } else {
+
+      this.timer = setInterval(() => {
+        this.setState({ numero: this.state.numero + 0.1 });
+      }, 100);
+      this.setState({ nomeBotao: "Parar" });
+    }
+
+  }
+
+  limpar() {
+
+    clearInterval(this.timer);
+    this.timer = null;
+    this.setState({ numero: 0, nomeBotao: "Iniciar", ultimo: this.state.numero });
+
+  }
+
+
   render() {
     return (
       <View style={styles.container}>
 
         <Image source={require("./src/assets/cronometro.png")} style={styles.cronometro} />
-        <Text style={styles.timer}>{this.state.timer}</Text>
+        <Text style={styles.numero}>{this.state.numero.toFixed(1)}</Text>
 
         <View style={styles.botoesArea}>
 
           <TouchableOpacity style={styles.botao}>
             <View>
-              <Text style={styles.botaoTexto}>Iniciar</Text>
+              <Text style={styles.botaoTexto} onPress={this.iniciar}>{this.state.nomeBotao}</Text>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.botao}>
             <View>
-              <Text style={styles.botaoTexto}>Parar</Text>
+              <Text style={styles.botaoTexto} onPress={this.limpar}>Limpar</Text>
             </View>
           </TouchableOpacity>
 
+
+        </View>
+        <View style={styles.areaUltima}>
+          <Text style={styles.textoCorrida}>
+            {this.state.ultimo > 0 ? 'Ultimo tempo: ' + this.state.ultimo.toFixed(2) + 's' : ''}
+          </Text>
         </View>
 
       </View>
@@ -48,7 +86,7 @@ const styles = StyleSheet.create({
   cronometro: {
 
   },
-  timer: {
+  numero: {
     fontSize: 65,
     color: "#fff",
     fontWeight: "bold",
@@ -73,5 +111,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#00AAEF"
+  },
+  areaUltima: {
+    marginTop: 40,
+  },
+  textoCorrida: {
+    fontSize: 25,
+    fontStyle: 'italic',
+    color: '#FFF'
   }
 });
